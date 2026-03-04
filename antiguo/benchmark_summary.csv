@@ -1,0 +1,2 @@
+config,orig_MB,comp_MB,ratio,savings%,compress_s,decode_s,chunks,gaussians_orig,gaussians_comp,sh_orig,sh_comp,cf_psnr_db,cf_ssim,cf_lpips,e2e_psnr_db,e2e_ssim,e2e_lpips,bl_psnr_db,bl_ssim,bl_lpips,startup_s,rebuffers,stall_s,qoe
+hexplane_downsample,41.64,35.55,1.17,14.6,0.062,0.025,34,127685,127685,3,3,28.35,0.9700,0.0240,23.67,0.8491,0.2262,25.32,0.8666,0.2146,0.31,50,1353.34,1.97

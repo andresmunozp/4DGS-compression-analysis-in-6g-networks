@@ -98,11 +98,17 @@ class VmafJsonReader:
             else ResultCategory.COMPRESSION
         )
 
+        # Distinguish the two VMAF comparisons in the display name
+        if axis == ComparisonAxis.END_TO_END:
+            display_suffix = "vmaf_vs_gt"
+        else:
+            display_suffix = "vmaf_vs_original"
+
         return MetricRecord(
             id=record_id,
             source=ResultSource.VMAF_JSON,
             category=category,
-            name=f"{strategy}_vmaf",
+            name=f"{strategy}_{display_suffix}",
             tags={
                 "strategy": strategy,
                 "axis": axis.value,

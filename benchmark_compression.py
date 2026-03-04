@@ -879,57 +879,102 @@ def main():
         results.append(entry)
         print()
 
-    # ── Write summary ─────────────────────────────────────────────────
+    # ── Write summary (merge with existing) ───────────────────────────
     summary_path = os.path.join(args.output_dir, "benchmark_results.json")
-    with open(summary_path, "w") as f:
-        json.dump(results, f, indent=2, default=str)
 
-    # CSV summary
+    # Load previous results and merge by config_name (new runs update old)
+    existing_results: List[Dict[str, Any]] = []
+    if os.path.exists(summary_path):
+        try:
+            with open(summary_path, "r") as f:
+                existing_results = json.load(f)
+            if not isinstance(existing_results, list):
+                existing_results = []
+            print(f"  Loaded {len(existing_results)} existing entries from {summary_path}")
+        except (json.JSONDecodeError, Exception) as e:
+            print(f"  Warning: could not read existing JSON ({e}), starting fresh")
+            existing_results = []
+
+    # Build lookup of new results by config_name
+    new_by_name = {r["config_name"]: r for r in results}
+
+    # Merge: update existing entries, keep old ones not in this run
+    merged_results: List[Dict[str, Any]] = []
+    seen_names: set = set()
+    for existing in existing_results:
+        name = existing.get("config_name", "")
+        if name in new_by_name:
+            # Replace with updated result
+            merged_results.append(new_by_name[name])
+            seen_names.add(name)
+        else:
+            # Keep previous entry
+            merged_results.append(existing)
+            seen_names.add(name)
+    # Append brand-new configs that weren't in the old file
+    for r in results:
+        if r["config_name"] not in seen_names:
+            merged_results.append(r)
+
+    with open(summary_path, "w") as f:
+        json.dump(merged_results, f, indent=2, default=str)
+    print(f"  Wrote {len(merged_results)} entries to {summary_path} "
+          f"({len(merged_results) - len(existing_results)} new, "
+          f"{len(existing_results)} previously existing)")
+
+    # CSV summary (also merged)
     csv_path = os.path.join(args.output_dir, "benchmark_summary.csv")
-    with open(csv_path, "w") as f:
-        headers = [
-            "config", "orig_MB", "comp_MB", "ratio", "savings%",
-            "compress_s", "decode_s", "chunks",
-            "gaussians_orig", "gaussians_comp",
-            "sh_orig", "sh_comp",
-            "cf_psnr_db", "cf_ssim", "cf_lpips",
-            "e2e_psnr_db", "e2e_ssim", "e2e_lpips",
-            "bl_psnr_db", "bl_ssim", "bl_lpips",
-            "startup_s", "rebuffers", "stall_s", "qoe",
+    headers = [
+        "config", "orig_MB", "comp_MB", "ratio", "savings%",
+        "compress_s", "decode_s", "chunks",
+        "gaussians_orig", "gaussians_comp",
+        "sh_orig", "sh_comp",
+        "cf_psnr_db", "cf_ssim", "cf_lpips",
+        "e2e_psnr_db", "e2e_ssim", "e2e_lpips",
+        "bl_psnr_db", "bl_ssim", "bl_lpips",
+        "startup_s", "rebuffers", "stall_s", "qoe",
+    ]
+
+    def _result_to_csv_row(r: Dict[str, Any]) -> List[str]:
+        cf = r.get("compression_fidelity", {})
+        e2e = r.get("end_to_end_quality", {})
+        bl = r.get("training_baseline", {})
+        return [
+            r["config_name"],
+            f"{r['original_size_bytes'] / 1e6:.2f}",
+            f"{r['compressed_size_bytes'] / 1e6:.2f}",
+            f"{r['compression_ratio']:.2f}",
+            f"{r['savings_pct']:.1f}",
+            f"{r['compress_time_s']:.3f}",
+            f"{r['decode_time_s']:.3f}",
+            str(r["num_chunks"]),
+            str(r["num_gaussians_original"]),
+            str(r["num_gaussians_compressed"]),
+            str(r["sh_degree_original"]),
+            str(r["sh_degree_compressed"]),
+            f"{cf.get('psnr_mean', 0):.2f}",
+            f"{cf.get('ssim_mean', 0):.4f}",
+            f"{cf.get('lpips_mean', 0):.4f}",
+            f"{e2e.get('psnr_mean', 0):.2f}",
+            f"{e2e.get('ssim_mean', 0):.4f}",
+            f"{e2e.get('lpips_mean', 0):.4f}",
+            f"{bl.get('psnr_mean', 0):.2f}",
+            f"{bl.get('ssim_mean', 0):.4f}",
+            f"{bl.get('lpips_mean', 0):.4f}",
+            f"{r['streaming_qoe']['startup_delay_s']:.2f}",
+            str(r["streaming_qoe"]["rebuffer_events"]),
+            f"{r['streaming_qoe']['total_stall_duration_s']:.2f}",
+            f"{r['streaming_qoe']['qoe_score']:.2f}",
         ]
+
+    with open(csv_path, "w") as f:
         f.write(",".join(headers) + "\n")
-        for r in results:
-            cf = r.get("compression_fidelity", {})
-            e2e = r.get("end_to_end_quality", {})
-            bl = r.get("training_baseline", {})
-            row = [
-                r["config_name"],
-                f"{r['original_size_bytes'] / 1e6:.2f}",
-                f"{r['compressed_size_bytes'] / 1e6:.2f}",
-                f"{r['compression_ratio']:.2f}",
-                f"{r['savings_pct']:.1f}",
-                f"{r['compress_time_s']:.3f}",
-                f"{r['decode_time_s']:.3f}",
-                str(r["num_chunks"]),
-                str(r["num_gaussians_original"]),
-                str(r["num_gaussians_compressed"]),
-                str(r["sh_degree_original"]),
-                str(r["sh_degree_compressed"]),
-                f"{cf.get('psnr_mean', 0):.2f}",
-                f"{cf.get('ssim_mean', 0):.4f}",
-                f"{cf.get('lpips_mean', 0):.4f}",
-                f"{e2e.get('psnr_mean', 0):.2f}",
-                f"{e2e.get('ssim_mean', 0):.4f}",
-                f"{e2e.get('lpips_mean', 0):.4f}",
-                f"{bl.get('psnr_mean', 0):.2f}",
-                f"{bl.get('ssim_mean', 0):.4f}",
-                f"{bl.get('lpips_mean', 0):.4f}",
-                f"{r['streaming_qoe']['startup_delay_s']:.2f}",
-                str(r["streaming_qoe"]["rebuffer_events"]),
-                f"{r['streaming_qoe']['total_stall_duration_s']:.2f}",
-                f"{r['streaming_qoe']['qoe_score']:.2f}",
-            ]
-            f.write(",".join(row) + "\n")
+        for r in merged_results:
+            try:
+                row = _result_to_csv_row(r)
+                f.write(",".join(row) + "\n")
+            except (KeyError, TypeError) as e:
+                print(f"  Warning: skipping CSV row for '{r.get('config_name', '?')}': {e}")
 
     print("=" * 70)
     print("BENCHMARK COMPLETE")
@@ -937,15 +982,15 @@ def main():
     print(f"  CSV:      {csv_path}")
     print("=" * 70)
 
-    # Print comparison table
+    # Print comparison table (all merged entries)
     print(f"\n{'Config':20s} {'Size MB':>8s} {'Ratio':>6s} {'Save%':>6s} "
           f"{'cf_PSNR':>8s} {'e2e_PSNR':>9s} {'bl_PSNR':>8s} "
           f"{'cf_SSIM':>8s} {'e2e_SSIM':>9s} "
           f"{'Decode':>7s} {'QoE':>4s}")
     print("-" * 120)
-    bl = results[0].get("training_baseline", {}) if results else {}
+    bl = merged_results[0].get("training_baseline", {}) if merged_results else {}
     bl_psnr = f"{bl['psnr_mean']:.2f}" if 'psnr_mean' in bl else "  n/a"
-    for r in results:
+    for r in merged_results:
         cf = r.get("compression_fidelity", {})
         e2e = r.get("end_to_end_quality", {})
         cf_p = f"{cf['psnr_mean']:.2f}" if 'psnr_mean' in cf else "  n/a"

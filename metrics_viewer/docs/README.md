@@ -6,10 +6,10 @@ Interactive dashboard for visualizing, comparing, and analyzing metrics from the
 
 ```bash
 # From the project root
-python -m viewers.metrics_viewer.app
+python -m metrics_viewer.app
 
 # Custom options
-python -m viewers.metrics_viewer.app --data-dir . --port 8050 --refresh-interval 30
+python -m metrics_viewer.app --data-dir . --port 8050 --refresh-interval 30
 ```
 
 Then open **http://localhost:8050** in your browser.

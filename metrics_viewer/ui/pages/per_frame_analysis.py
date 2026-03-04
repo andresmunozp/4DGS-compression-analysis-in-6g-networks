@@ -99,19 +99,52 @@ def build_per_frame_analysis(service: MetricsService) -> html.Div:
             title="PSNR per Frame (End-to-End)",
         ))
 
-    # VMAF per-frame
+    # VMAF per-frame — split by axis (vs original / vs ground truth)
     if vmaf_records:
-        charts.append(html.H5("VMAF per Frame", className="section-title mt-4"))
-        charts.append(per_frame_chart(
-            vmaf_records, "vmaf",
-            chart_id="pf-vmaf-line",
-            title="VMAF Score per Frame (All Strategies)",
-        ))
-        charts.append(per_frame_heatmap(
-            vmaf_records, "vmaf",
-            chart_id="pf-vmaf-heatmap",
-            title="VMAF Heatmap (Strategies × Frames)",
-        ))
+        vmaf_vs_original = [
+            r for r in vmaf_records
+            if r.tags.get("axis") == ComparisonAxis.COMPRESSION_FIDELITY.value
+        ]
+        vmaf_vs_gt = [
+            r for r in vmaf_records
+            if r.tags.get("axis") == ComparisonAxis.END_TO_END.value
+        ]
+
+        if vmaf_vs_original:
+            charts.append(html.H5(
+                "VMAF per Frame — vs Original Renders",
+                className="section-title mt-4",
+            ))
+            charts.append(per_frame_chart(
+                vmaf_vs_original, "vmaf",
+                axis=ComparisonAxis.COMPRESSION_FIDELITY,
+                chart_id="pf-vmaf-vs-orig-line",
+                title="VMAF per Frame (Decompressed vs Original Renders)",
+            ))
+            charts.append(per_frame_heatmap(
+                vmaf_vs_original, "vmaf",
+                axis=ComparisonAxis.COMPRESSION_FIDELITY,
+                chart_id="pf-vmaf-vs-orig-heatmap",
+                title="VMAF Heatmap — vs Original Renders",
+            ))
+
+        if vmaf_vs_gt:
+            charts.append(html.H5(
+                "VMAF per Frame — vs Ground Truth",
+                className="section-title mt-4",
+            ))
+            charts.append(per_frame_chart(
+                vmaf_vs_gt, "vmaf",
+                axis=ComparisonAxis.END_TO_END,
+                chart_id="pf-vmaf-vs-gt-line",
+                title="VMAF per Frame (Decompressed vs Ground Truth)",
+            ))
+            charts.append(per_frame_heatmap(
+                vmaf_vs_gt, "vmaf",
+                axis=ComparisonAxis.END_TO_END,
+                chart_id="pf-vmaf-vs-gt-heatmap",
+                title="VMAF Heatmap — vs Ground Truth",
+            ))
 
     # Heatmap for benchmarks
     if benchmark_records:

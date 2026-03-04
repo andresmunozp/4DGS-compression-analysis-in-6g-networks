@@ -1,0 +1,29 @@
+# entropygs.yaml — EntropyGS: distribution-aware entropy coding (medium profile)
+#
+# Inspired by "EntropyGS: An Efficient Entropy Coding on 3D Gaussian Splatting"
+# (Huang et al., arXiv 2508.10227).
+#
+# Pipeline: light pruning → SH reduction → EntropyGS (adaptive quantization +
+# distribution-fit arithmetic coding).
+#
+# No generic byte-level compressor (zlib/zstd) is needed — the arithmetic coder
+# is already near-optimal for each attribute group.
+
+strategies:
+  - name: PruningStrategy
+    params:
+      opacity_threshold: 0.005
+      max_gaussians: 150000
+
+  - name: SHReductionStrategy
+    params:
+      target_sh_degree: 2
+
+  - name: EntropyGSStrategy
+    params:
+      profile: medium          # "large" | "medium" | "small"
+      gmm_max_components: 4
+      # Uncomment to override individual bit-depths:
+      # custom_bits:
+      #   features_rest: 3
+      #   xyz: 15

@@ -18,7 +18,7 @@ project_root = Path(__file__).resolve().parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from viewers.metrics_viewer.app import main
+from metrics_viewer.app import main
 
 if __name__ == "__main__":
     main()
