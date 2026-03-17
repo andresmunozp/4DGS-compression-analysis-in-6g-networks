@@ -7,10 +7,10 @@ set -euo pipefail
 SCENE="coffee_martini"
 WORK="${WORK:-/mnt/c/Users/Usuario2/Documents/JhojanAndres4E/4DGaussians}"
 TESTING_ITERATIONS=(2000)
-SAVE_ITERATIONS=(2000)
+SAVE_ITERATIONS=(14000)
 DATA_PATH="${WORK}/data/dynerf/${SCENE}"
 CONFIG="${WORK}/arguments/dynerf/${SCENE}.py"
-ITERATIONS=2000
+ITERATIONS=14000
 OUTPUT="${WORK}/output/dynerf/${SCENE}"
 PORT=6017
 OUTROOT="${WORK}/outputs_eval"

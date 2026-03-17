@@ -13,8 +13,6 @@ Usage
         --config compression/configs/balanced.yaml \
         --output compressed_output/ \
         --chunk_size 1048576 \
-        --source_path data/dynerf/coffee_martini \
-        --configs arguments/dynerf/coffee_martini.py
 """
 
 from __future__ import annotations
