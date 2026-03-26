@@ -5583,11 +5583,11 @@
     "config_name": "aggressive",
     "config_file": "compression/configs/aggressive.yaml",
     "original_size_bytes": 41643881,
-    "compressed_size_bytes": 5465932,
+    "compressed_size_bytes": 5465933,
     "compression_ratio": 7.6188,
     "savings_pct": 86.87,
-    "compress_time_s": 0.2642,
-    "decode_time_s": 0.0336,
+    "compress_time_s": 0.2818,
+    "decode_time_s": 0.0257,
     "num_chunks": 6,
     "num_gaussians_original": 127685,
     "num_gaussians_compressed": 80000,
@@ -8329,25 +8329,25 @@
       ]
     },
     "streaming_qoe": {
-      "total_payload_bytes": 5466034,
+      "total_payload_bytes": 5466035,
       "num_chunks": 6,
       "bandwidth_mbps": 1000.0,
       "total_transmission_time_s": 0.0437,
-      "startup_delay_s": 0.0773,
+      "startup_delay_s": 0.0694,
       "rebuffer_events": 300,
-      "total_stall_duration_s": 30522.2576,
-      "e2e_latency_s": 212.8165,
+      "total_stall_duration_s": 31283.018,
+      "e2e_latency_s": 217.8636,
       "effective_throughput_MBps": 125.0,
       "qoe_score": 1.99,
       "target_fps": 30.0,
-      "export_time_per_frame_s": 0.709131
+      "export_time_per_frame_s": 0.72598
     },
     "pipeline_stats": [
       {
         "strategy": "pruning",
         "ratio": 1.3988,
         "savings_pct": 28.51,
-        "compress_time_s": 0.0213,
+        "compress_time_s": 0.0168,
         "decompress_time_s": 0.0,
         "extra": {}
       },
@@ -8363,7 +8363,7 @@
         "strategy": "quantization",
         "ratio": 1.8733,
         "savings_pct": 46.62,
-        "compress_time_s": 0.0028,
+        "compress_time_s": 0.0025,
         "decompress_time_s": 0.0,
         "extra": {}
       },
@@ -8371,7 +8371,7 @@
         "strategy": "hexplane_svd",
         "ratio": 1.3445,
         "savings_pct": 25.62,
-        "compress_time_s": 0.1686,
+        "compress_time_s": 0.1717,
         "decompress_time_s": 0.0,
         "extra": {}
       },
@@ -8379,7 +8379,7 @@
         "strategy": "entropy_zlib",
         "ratio": 1.2644,
         "savings_pct": 20.91,
-        "compress_time_s": 0.0535,
+        "compress_time_s": 0.0689,
         "decompress_time_s": 0.0,
         "extra": {}
       }
@@ -11179,11 +11179,11 @@
     "config_name": "sh",
     "config_file": "compression/configs/sh.yaml",
     "original_size_bytes": 41643881,
-    "compressed_size_bytes": 30933909,
+    "compressed_size_bytes": 30933908,
     "compression_ratio": 1.3462,
     "savings_pct": 25.72,
-    "compress_time_s": 0.0472,
-    "decode_time_s": 0.0176,
+    "compress_time_s": 0.0469,
+    "decode_time_s": 0.0178,
     "num_chunks": 30,
     "num_gaussians_original": 127685,
     "num_gaussians_compressed": 127685,
@@ -11675,25 +11675,25 @@
       ]
     },
     "streaming_qoe": {
-      "total_payload_bytes": 30934419,
+      "total_payload_bytes": 30934418,
       "num_chunks": 30,
       "bandwidth_mbps": 10.0,
       "total_transmission_time_s": 24.7475,
-      "startup_delay_s": 24.7651,
+      "startup_delay_s": 24.7653,
       "rebuffer_events": 50,
-      "total_stall_duration_s": 944.634,
-      "e2e_latency_s": 63.4109,
+      "total_stall_duration_s": 942.3476,
+      "e2e_latency_s": 63.3215,
       "effective_throughput_MBps": 1.25,
       "qoe_score": 1.0,
       "target_fps": 30.0,
-      "export_time_per_frame_s": 0.772916
+      "export_time_per_frame_s": 0.771122
     },
     "pipeline_stats": [
       {
         "strategy": "sh_reduction",
         "ratio": 1.3469,
         "savings_pct": 25.76,
-        "compress_time_s": 0.0043,
+        "compress_time_s": 0.0029,
         "decompress_time_s": 0.0,
         "extra": {}
       }
