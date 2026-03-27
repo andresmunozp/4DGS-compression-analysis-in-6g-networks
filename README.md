@@ -654,15 +654,6 @@ python decompress.py ^
 # 5. Abrir /tmp/decompressed/gaussian_pertimestamp/ en SuperSplat
 ```
 
-### Chunk sizes recomendados
-
-| Ancho de banda | chunk_size sugerido | Razonamiento |
-|----------------|---------------------|--------------|
-| 1 Mbps | 65536 (64 KB) | Chunks pequeños para menor latencia de inicio |
-| 5 Mbps | 262144 (256 KB) | Balance |
-| 10 Mbps | 524288 (512 KB) | Eficiente |
-| 50+ Mbps | 1048576 (1 MB) | Default, menos overhead |
-
 ---
 
 ## 10. Visualización en SuperSplat
@@ -699,23 +690,13 @@ Los PLYs exportados son **100% compatibles** con el formato de `export_perframe_
 ```json
 {
   "assemble_time_s": 0.023,    // Rearmar chunks → no relevante en red real
-  "decode_time_s": 0.892,      // ⭐ LATENCIA DE RED (tiempo hasta tener el modelo listo)
+  "decode_time_s": 0.892,      // LATENCIA DE RED (tiempo hasta tener el modelo listo)
   "export_time_s": 45.123,     // Ejecutar deformación + escribir PLYs
   "total_time_s": 46.038,
   "num_gaussians": 115642,     // Puede ser < original si hubo pruning
   "num_frames": 300
 }
 ```
-
-### Métricas de Streaming QoE
-
-| Métrica | Descripción | Ideal |
-|---------|-------------|-------|
-| `startup_delay_s` | Tiempo desde que se empieza a transmitir hasta que se puede reproducir | < 3s |
-| `rebuffer_events` | Veces que la reproducción se interrumpe por falta de datos | 0 |
-| `total_stall_duration_s` | Tiempo total de interrupciones | 0s |
-| `qoe_score` | Puntuación general 1-5 (inspirado en ITU-T P.1203) | > 4.0 |
-| `e2e_latency_s` | Latencia extremo a extremo completa | — |
 
 ---
 
