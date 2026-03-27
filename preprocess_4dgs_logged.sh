@@ -162,8 +162,8 @@ prepare_workspace() {
 
 prepare_workspace
 
-# run_step "00" "extract frames" \
-# "./extract_frames.sh ${WORKDIR}"
+run_step "00" "extract frames" \
+"./extract_frames.sh ${WORKDIR}"
 
 run_step "01" "preprocess_dynerf" \
 "python scripts/preprocess_dynerf.py --datadir data/dynerf/${SCENE}"

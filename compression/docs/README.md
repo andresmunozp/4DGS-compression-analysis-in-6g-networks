@@ -121,7 +121,7 @@ python decompress.py ^
 # 3. Ver en SuperSplat
 #    Abrir decompressed_output/balanced/gaussian_pertimestamp/ en SuperSplat
 
-# Comandos para WSL: 
+# Comandos para WSL:
 python compress.py --model_path output/dynerf/coffee_martini_sirvio --iteration 14000 --config compression/configs/balanced.yaml --output compressed_output/balanced --chunk_size 524288
 
 python decompress.py --input compressed_output/balanced --output decompressed_output/balanced --configs arguments/dynerf/coffee_martini.py --num_frames 300
